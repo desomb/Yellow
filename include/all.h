@@ -16,18 +16,28 @@
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
 #include <unistd.h>
+#include <SFML/Graphics.hpp>
+#include <cstdlib>
+#include <iostream>
+#include <sstream>
+#include <list>
+#include <fstream>
 
 extern int iphdrlen;
 extern struct sockaddr socket_addr;
 extern struct sockaddr_in source;
 extern struct sockaddr_in dest;
+extern int socket_fd;
+extern sf::String str;
+extern FILE *tmp_txt;
 
+using namespace std;
 
-void data_process(unsigned char* buffer,int bufflen, FILE *log_txt);
-void udp_header(unsigned char* buffer, int bufflen, FILE *log_txt);
-void tcp_header(unsigned char* buffer,int bufflen, FILE *log_txt);
-void payload(unsigned char* buffer,int bufflen, FILE *log_txt);
-void ethernet_header(unsigned char* buffer,int bufflen, FILE *log_txt);
-void ip_header(unsigned char* buffer,int bufflen, FILE *log_txt);
+int data_process(unsigned char* buffer,int bufflen, FILE *log_txt, sf::RenderWindow &app);
+int udp_header(unsigned char* buffer, int bufflen, FILE *log_txt, sf::RenderWindow &app);
+int tcp_header(unsigned char* buffer,int bufflen, FILE *log_txt, sf::RenderWindow &app);
+int payload(unsigned char* buffer,int bufflen, FILE *log_txt, sf::RenderWindow &app);
+int ethernet_header(unsigned char* buffer,int bufflen, FILE *log_txt, sf::RenderWindow &app);
+int ip_header(unsigned char* buffer,int bufflen, FILE *log_txt, sf::RenderWindow &app);
 
 #endif

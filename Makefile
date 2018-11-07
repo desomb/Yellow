@@ -1,5 +1,5 @@
 all	:
-	g++ -I./include src/*.cpp -o Yellow -g
+	g++ -I./include src/*.cpp -o Yellow -lsfml-graphics -lsfml-window -lsfml-system -g
 
 fclean:
 	rm -rf *.txt
@@ -7,4 +7,4 @@ fclean:
 
 re:
 	rm -rf *.txt
-	        g++ -I./include src/*.cpp -o Yellow -g
+	        g++ -I./include src/*.cpp -o Yellow -lsfml-graphics -lsfml-window -lsfml-system -g
