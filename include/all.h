@@ -1,6 +1,7 @@
 #ifndef ALL_H_
 #define ALL_H_
 
+#include <errno.h>
 #include <stdio.h>
 #include <malloc.h>
 #include <string.h>
@@ -32,7 +33,10 @@ extern struct sockaddr_in dest;
 extern int socket_fd;
 extern sf::String str;
 extern FILE *tmp_txt;
+extern FILE *data_txt;
 extern std::string packetData;
+extern sf::Font font;
+extern sf::Text text;
 
 using namespace std;
 
