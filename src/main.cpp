@@ -100,18 +100,16 @@ int main()
 
 	  if (event.type == Event::KeyPressed)
 	    {
-	      if (event.key.code == sf::Keyboard::C)
+	      //capture
+	      if (event.key.code == sf::Keyboard::C && capturePaused != 1 && captureData != 1)
 		{
 		  error = -1;
 		  if (captureStarted == 0)
-		    {
-		      captureStarted = 1;
-		    }
+		    captureStarted = 1;
 		  else
-		    {
-		      captureStarted = 0;
-		    }
+		    captureStarted = 0;
 		}
+	      //pause
 	      if (event.key.code == sf::Keyboard::P)
 		{
 		  if (captureStarted == 1)
@@ -124,7 +122,8 @@ int main()
 		  else
 		    error = 0;
 		}
-	      if (event.key.code == sf::Keyboard::D)
+	      //Display
+	      if (event.key.code == sf::Keyboard::D && captureStarted != 1)
 		{
 		  if (capturePaused == 1)
 		    {
@@ -136,6 +135,9 @@ int main()
 		  else
 		    error = 1;
 		}
+	      //load from file
+	      if (event.key.code == sf::Keyboard::L)
+		;
 	      
 	    }	      
 	}
