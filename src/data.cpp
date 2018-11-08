@@ -23,11 +23,12 @@ int payload(unsigned char* buffer,int bufflen, FILE *log_txt, RenderWindow &app)
     {
       if(i != 0 && i%16==0)
 	{
-	fprintf(log_txt,"\n");
-	fprintf(tmp_txt,"\n");
+	  fprintf(log_txt,"\n");
+	  fprintf(tmp_txt,"\n");
 	}
       fprintf(log_txt," %.2X ",data[i]);
       fprintf(tmp_txt," %.2X ",data[i]);
+      packetData += std::to_string(data[i]);
     }
   fprintf(log_txt,"\n-----------------------------------------------------------------\n\n\n");
   fprintf(tmp_txt,"\n-----------------------------------------------------------------\n\n\n");

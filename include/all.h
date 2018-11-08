@@ -17,6 +17,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
@@ -30,6 +32,7 @@ extern struct sockaddr_in dest;
 extern int socket_fd;
 extern sf::String str;
 extern FILE *tmp_txt;
+extern std::string packetData;
 
 using namespace std;
 
