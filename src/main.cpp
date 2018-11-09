@@ -16,15 +16,15 @@ std::string packetData;
 sf::Font font;
 sf::Text text;
 
-int howToUse(RenderWindow &app)
+void howToUse(RenderWindow &app)
 {
-  text.setString("To start capturing, press \"C\", and to stop it, repress \"C\"\nTo load packet from a file, use \"L\"\nTo pause a Packet and display its content, press \"P\"\nTo display the data content of packet, press D when it's paused");
+  text.setString("To start capturing, press \"C\", and to stop it, repress \"C\"\nTo load packet from a file, use \"L\"\tThe file must be named log.txt\nTo pause a Packet and display its content, press \"P\"\nTo display the data content of packet, press D when it's paused");
   text.setPosition(0.f, 1);
   text.setCharacterSize(18);
   app.draw(text);
 }
 
-int drawError(RenderWindow &app, int error)
+void drawError(RenderWindow &app, int error)
 {
 
   if (error == 0)
@@ -37,11 +37,40 @@ int drawError(RenderWindow &app, int error)
   app.draw(text);
 }
 
+int dispFile(FILE *log_txt, RenderWindow &app)
+{
+  int i = 0;
+  ifstream log;
+  std::string line;
+  std::list<sf::Text> textList;
+
+  app.clear();
+  //  fclose(log_txt);
+  log.open("log.txt");
+  text.setCharacterSize(12);
+  while (std::getline(log, line))
+    {
+      text.setString(line);
+      textList.push_back(text);
+    }
+  log.close();
+	
+  for(std::list<sf::Text>::iterator it = textList.begin(); it != textList.end(); ++it)
+    {
+      sf::Text& text = *it;
+      sf::FloatRect boundings = text.getLocalBounds();
+      text.setPosition(0.f, 1 + (i * 10));
+      app.draw(text);
+      i++;
+    }
+
+}
+
 int main()
 {
   int addr_len;
   int bufflen;
-  unsigned char *buffer = (unsigned char *)malloc(6553600);
+  unsigned char *buffer = (unsigned char *)malloc(65536);
   FILE *log_txt;
   RenderWindow app(VideoMode(1600, 900, 32), "Ma premiere fenetre SFML ! ");
   std::string line;
@@ -51,6 +80,7 @@ int main()
   int captureStarted = 0;
   int capturePaused = 0;
   int captureData = 0;
+  int captureFromF = 0;
   int error = -1;  
   int nt = 0;
   int nd = 0;
@@ -66,11 +96,10 @@ int main()
     }
   text.setFont(font);
 
-  memset(buffer,0,6553600);
-  log_txt = fopen("log.txt","w");
+  memset(buffer,0,65536);
   tmp_txt = fopen("tmp.txt","w");
   data_txt = fopen("data.txt","w");
-  if(!log_txt || !tmp_txt || !data_txt)
+  if(!tmp_txt || !data_txt)
     {
       printf("Can't open log file\n");
       return -1;
@@ -101,13 +130,25 @@ int main()
 	  if (event.type == Event::KeyPressed)
 	    {
 	      //capture
-	      if (event.key.code == sf::Keyboard::C && capturePaused != 1 && captureData != 1)
+	      if (event.key.code == sf::Keyboard::C && capturePaused != 1 && captureFromF != 1)
 		{
+
 		  error = -1;
 		  if (captureStarted == 0)
-		    captureStarted = 1;
+		    {
+		      log_txt = fopen("log.txt","w");
+		      if (!log_txt)
+			{
+			  printf("Can't open log file\n");
+			  return -1;
+			}
+		      captureStarted = 1;
+		    }
 		  else
-		    captureStarted = 0;
+		    {
+		      fclose(log_txt);
+		      captureStarted = 0;
+		    }
 		}
 	      //pause
 	      if (event.key.code == sf::Keyboard::P)
@@ -122,22 +163,18 @@ int main()
 		  else
 		    error = 0;
 		}
-	      //Display
-	      if (event.key.code == sf::Keyboard::D && captureStarted != 1)
+	      if (event.key.code == sf::Keyboard::L && capturePaused == 0 && captureStarted == 0)
 		{
-		  if (capturePaused == 1)
-		    {
-		      if (captureData == 0)
-			captureData = 1;
-		      else
-			captureData = 0;
-		    }
+		  if (captureFromF == 0)
+		    captureFromF = 1;
 		  else
-		    error = 1;
+		    captureFromF = 0;
+		  if (dispFile(log_txt, app) == -1)
+		    {
+		      close(socket_fd);
+		      return (-1);
+		    }
 		}
-	      //load from file
-	      if (event.key.code == sf::Keyboard::L)
-		;
 	      
 	    }	      
 	}
@@ -145,39 +182,32 @@ int main()
 
       if (capturePaused == 0)
 	{
-	  std::cout << "test01" << std::endl;
 	  tmp_txt = fopen("tmp.txt","w");
 	  nt = 0;
-	  std::cout << "test02" << std::endl;
 	  if(!tmp_txt)
 	    {
 	      printf("Can't open log file\n");
 	      return -1;
 	    }
-	  std::cout << "test3" << std::endl;
 	}
       if (captureData == 0)
 	{
-	  std::cout << "test04" << std::endl;
 
 	  data_txt = fopen("data.txt","w");
 	  nd = 0;
-	  std::cout << "test05" << std::endl;
 
 	  if(!data_txt)
 	    {
 	      printf("Can't open log file : %d\n", errno);
 	      return -1;
 	    }
-	  std::cout << "test06" << std::endl;
 
 	}
 
       
-      std::cout << "test2" << std::endl;
       
       app.display();
-      if (capturePaused == 0)
+      if (capturePaused == 0 && captureFromF != 1)
 	app.clear();
       //text.setCharacterSize(17);
       
@@ -189,49 +219,17 @@ int main()
 	  close(socket_fd);
 	  return (-1);
 	}
-      fflush(log_txt);
-      fflush(tmp_txt);
-      fflush(data_txt);
       //  sf::Text text;
 
-      std::cout << "test3" << std::endl;
       //Howtouse & errors
-      if (captureStarted == 0)
+      if (captureStarted == 0 && captureFromF != 1)
 	howToUse(app);
-      if (error != -1)
+      if (error != -1 && captureFromF != 1)
 	drawError(app, error);
       
-      std::cout << "test4" << std::endl;
-      if (captureData == 1)
-	{
-	  textList.clear();
-	  data.open("data.txt");
-	  text.setString(packetData);
-	  text.setCharacterSize(12);	  
-	  while (std::getline(data, line))
-	    {
-	      text.setString(line);
-	      textList.push_back(text);
-	    }
-	  std::cout << i << std::endl;
-	  for(std::list<sf::Text>::iterator it = textList.begin(); it != textList.end(); ++it)
-	    {
-	      sf::Text& text = *it;
-	      sf::FloatRect boundings = text.getLocalBounds();
-	      text.setPosition(0.f, 1 + (i * 10));
-	      app.draw(text);
-	      i++;
-	    }
-	  
-	  app.draw(text);
-	  captureData = 0;
-	  data.close();
-	}
 
-      std::cout << "test5" << std::endl;      
       if (captureStarted == 1 && capturePaused == 0)
 	{
-	  std::cout << "test6" << std::endl;
 	  textList.clear();
 	  i = 0;
 	  data_process(buffer, bufflen, log_txt, app);
@@ -250,7 +248,8 @@ int main()
 	    }
 	  tmp.close();
 	
-	  std::cout << "test7" << std::endl;      
+	  if (textList.empty())
+	    textList = dataList;
 	  for(std::list<sf::Text>::iterator it = textList.begin(); it != textList.end(); ++it)
 	    {
 	      sf::Text& text = *it;
@@ -260,24 +259,19 @@ int main()
 	      i++;
 	    }
 
-	  std::cout << "test8" << std::endl;      	  
-	  sf::sleep(seconds(0.17f));
-	  std::cout << "test9" << std::endl;
+	  dataList = textList;
+	  sf::sleep(seconds(0.05f));
 	}
-      std::cout << "test10" << std::endl;
 
       if (tmp_txt != NULL)
 	fclose(tmp_txt);
-      std::cout << "test11" << std::endl;
       if (data_txt != NULL)
 	fclose(data_txt);
       tmp_txt = NULL;
       data_txt = NULL;
 
-      std::cout << "test12" << std::endl;      
-
-      
     }
+  
   std::remove("tmp.txt");
   std::remove("data.txt");
   close(socket_fd);
