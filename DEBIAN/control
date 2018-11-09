@@ -1,0 +1,11 @@
+Source: Yellow
+Section: Unknown
+Priority: optional
+Maintainer: Vincent Desombre <desombre.v@gmail.com>
+Build-Depends: debhelper (>=9)
+Standards-Version: 3.9.4
+Homepage: <URL amont, si pertinente>
+Package: Yellow
+Architecture: all
+Description: Package pour projet Yellow
+Version: 0.0.1
