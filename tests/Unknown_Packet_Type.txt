@@ -1,0 +1,26 @@
+Ethernet Header
+-Source Address: 14-58-D0-B7-27-3D
+-Destination Address: 40-65-A3-01-E7-3C
+
+IP Header
+-Version              : 4
+-Internet Header Length  : 5 DWORDS or 20 Bytes
+-Total Length      : 71  Bytes
+-Identification    : 14341
+-Time To Live    : 64
+-Protocol     : 17
+-Header Checksum   : 3390
+-Source IP         : 192.168.0.16
+-Destination IP    : 192.168.0.16
+
+UDP Header
+-Source Port    : 49268
+-Destination Port: 51648
+-UDP Length      : 51
+-UDP Checksum   : 62711
+
+Data
+90  78  DA  71  16  03  9C  77  00  00  00  01  09  C4  A3  6A
+D7  93  55  DE  BC  04  E4  92  64  6D  4C  26  FB  D2  7F  43
+7A  EF  73  9D  C8  DF  B0  65  F3  00  00
+-----------------------------------------------------------------

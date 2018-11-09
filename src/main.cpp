@@ -37,24 +37,81 @@ void drawError(RenderWindow &app, int error)
   app.draw(text);
 }
 
+int errorCheck(std::string line, int g, int &j)
+{
+  int i = 0;
+  static int a = 0;
+  
+  if (g == 0 && (line.find("TCP Packet") != std::string::npos || line.find("UDP Packet") != std::string::npos))
+    {
+      i++;
+      j++;
+      if (line.find("UDP Packet") != std::string::npos)
+	j++;
+    }
+  
+  if (line.find("Ethernet Header") != std::string::npos || line.find("Source Address:") != std::string::npos || line.find("Destination Address:") != std::string::npos || line.find("IP Header") != std::string::npos || line.find("Version") != std::string::npos || line.find("Internet Header Length") != std::string::npos || line.find("Total Length") != std::string::npos || line.find("Identification") != std::string::npos || line.find("Time To Live") != std::string::npos || line.find("Protocol") != std::string::npos || line.find("Header Checksum") != std::string::npos || line.find("Source IP") != std::string::npos || line.find("Destination IP") != std::string::npos || line.find("TCP Header") != std::string::npos || line.find("Source Port") != std::string::npos || line.find("Destination Port") != std::string::npos || line.find("Sequence Number") != std::string::npos || line.find("Acknowledge Number") != std::string::npos || line.find("-Header Length") != std::string::npos || line.find("----------Flags-----------") != std::string::npos || line.find("Urgent Flag") != std::string::npos || line.find("Acknowledgement Flag") != std::string::npos || line.find("Push Flag") != std::string::npos || line.find("Reset Flag") != std::string::npos || line.find("Synchronise Flag") != std::string::npos || line.find("Finish Flag") != std::string::npos || line.find("Window size") != std::string::npos || line.find("-Checksum") != std::string::npos || line.find("Urgent Pointer") != std::string::npos || line.find("Data") != std::string::npos || line.find("UDP Header") != std::string::npos || line.find("UDP Length") != std::string::npos || line.find("UDP Checksum") != std::string::npos)
+    i++;
+
+  if (a == 1)
+    {
+      if (line.find("-----------------------------------------------------------------") != std::string::npos)
+	return (-10000000);
+      else
+	a++;
+      if (line.empty())
+	return (-10000000);
+	
+    }
+  if (line.find("Data") != std::string::npos)
+    a++;
+  
+  return (i);
+}
+
 int dispFile(FILE *log_txt, RenderWindow &app)
 {
   int i = 0;
   ifstream log;
   std::string line;
   std::list<sf::Text> textList;
-
+  int a = 0;
+  int g = 0;
+  int j = 0;
+  int endValid = 0;
+  
   app.clear();
-  //  fclose(log_txt);
   log.open("log.txt");
   text.setCharacterSize(12);
   while (std::getline(log, line))
     {
       text.setString(line);
+      a += errorCheck(line, g, j);
+      if (a < 0)
+	{
+	  std::cout << "t" << std::endl;
+	  return (-1);
+	}
       textList.push_back(text);
+      if (line.find("-----------------------------------------------------------------") != std::string::npos)
+	{	  
+	  endValid = 1;
+	  break;
+	}
+      g++;
     }
   log.close();
-	
+
+  std::cout << "a : " << a << " j : " << j << std::endl;
+  if (j <= 0)
+    return (-1);
+  if (j == 1 && a != 31)
+    return (-1);
+  if (j == 2 && a != 20)
+    return (-1);
+  if (endValid == 0)
+    return (-1);
+    
   for(std::list<sf::Text>::iterator it = textList.begin(); it != textList.end(); ++it)
     {
       sf::Text& text = *it;
@@ -114,13 +171,11 @@ int main()
 
   while (app.isOpen())
     {
-      std::cout << "test0" << std::endl;
       Event event;
       
 
 
 
-      std::cout << "test1" << std::endl;
       //Gestion events
       while (app.pollEvent(event))
 	{
@@ -171,6 +226,7 @@ int main()
 		    captureFromF = 0;
 		  if (dispFile(log_txt, app) == -1)
 		    {
+		      std::cout << "Wrong file format" << std::endl;
 		      close(socket_fd);
 		      return (-1);
 		    }

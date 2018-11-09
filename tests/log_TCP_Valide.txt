@@ -1,0 +1,37 @@
+TCP Packet
+Ethernet Header
+-Source Address: 14-58-D0-B7-27-3D
+-Destination Address: 40-65-A3-01-E7-3C
+
+IP Header
+-Version              : 4
+-Internet Header Length  : 5 DWORDS or 20 Bytes
+-Total Length      : 52  Bytes
+-Identification    : 46415
+-Time To Live    : 64
+-Protocol     : 6
+-Header Checksum   : 52263
+-Source IP         : 192.168.0.16
+-Destination IP    : 192.168.0.16
+
+TCP Header
+-Source Port          : 57858
+-Destination Port     : 443
+-Sequence Number      : 3955823688
+-Acknowledge Number   : 137833347
+-Header Length        : 8 DWORDS or 32 BYTES
+----------Flags-----------
+-Urgent Flag          : 0
+-Acknowledgement Flag : 1
+-Push Flag            : 0
+-Reset Flag           : 0
+-Synchronise Flag     : 0
+-Finish Flag          : 0
+-Window size          : 24576
+-Checksum             : 47475
+-Urgent Pointer       : 0
+
+Data
+08  37  2B  83  80  10  60  00  B9  73  00  00  01  01  08  0A
+00  2D  FB  9B  4E  25  2E  C7
+-----------------------------------------------------------------

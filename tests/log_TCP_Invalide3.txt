@@ -1,0 +1,32 @@
+TCP Packet
+Ethernet Header
+-Source Address: 14-58-D0-B7-27-3D
+-Destination Address: 40-65-A3-01-E7-3C
+
+IP Header
+-Version              : 4
+-Internet Header Length  : 5 DWORDS or 20 Bytes
+-Total Length      : 52  Bytes
+-Identification    : 60856
+-Time To Live    : 64
+-Protocol     : 6
+-Header Checksum   : 37822
+-Source IP         : 192.168.0.16
+-Destination IP    : 192.168.0.16
+
+TCP Header
+----------Flags-----------
+-Urgent Flag          : 0
+-Acknowledgement Flag : 1
+-Push Flag            : 0
+-Reset Flag           : 0
+-Synchronise Flag     : 0
+-Finish Flag          : 0
+-Window size          : 24576
+-Checksum             : 47475
+-Urgent Pointer       : 0
+
+Data
+0D  1D  A6  88  80  10  60  00  B9  73  00  00  01  01  08  0A
+00  2E  5F  C2  4E  26  BF  63
+-----------------------------------------------------------------
